@@ -1,11 +1,17 @@
 package com.example.garagesystembackend.services.interfaces;
 
+import com.example.garagesystembackend.models.VehicleOwner;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public interface IVehicleOwnerService {
 
-    String getVehicleOwner(String email);
+    List<VehicleOwner> getAllVehicleOwners();
 
-    String updateVehicleOwner(String name);
+    VehicleOwner getVehicleOwner(String email);
+
+    void updateVehicleOwner(VehicleOwner owner);
 }
