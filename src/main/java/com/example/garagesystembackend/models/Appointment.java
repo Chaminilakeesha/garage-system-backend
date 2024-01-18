@@ -1,9 +1,14 @@
 package com.example.garagesystembackend.models;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "Appointment")
 public class Appointment {

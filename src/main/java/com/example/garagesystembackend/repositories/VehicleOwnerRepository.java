@@ -9,7 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface VehicleOwnerRepository extends JpaRepository<VehicleOwner,Integer>, JpaSpecificationExecutor<VehicleOwner> {
-    Optional<VehicleOwner> findByEmail(String email);
 
-    boolean existsByEmail(String email);
 }

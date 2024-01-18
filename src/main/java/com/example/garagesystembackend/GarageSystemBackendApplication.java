@@ -8,7 +8,6 @@ public class GarageSystemBackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GarageSystemBackendApplication.class, args);
-		System.out.println("PRINT SOMETHING");
 	}
 
 }
