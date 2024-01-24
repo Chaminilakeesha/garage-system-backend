@@ -1,11 +1,11 @@
 package com.example.garagesystembackend.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -32,6 +32,13 @@ public class VehicleOwner {
 
     @Column(name="password",nullable = false)
     private String password;
+
+    public VehicleOwner(String ownerName, String email, String mobileNo, String password) {
+        this.ownerName = ownerName;
+        this.email = email;
+        this.mobileNo = mobileNo;
+        this.password = password;
+    }
 
     @OneToMany(mappedBy = "vehicleOwner")
     private List<Vehicle> vehicles;
