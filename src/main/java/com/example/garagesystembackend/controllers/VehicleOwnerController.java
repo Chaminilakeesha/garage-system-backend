@@ -1,9 +1,11 @@
 package com.example.garagesystembackend.controllers;
 
 import com.example.garagesystembackend.DTO.requests.UpdateVehicleOwnerDTO;
+import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.models.VehicleOwner;
 import com.example.garagesystembackend.services.VehicleOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,23 +23,14 @@ public class VehicleOwnerController {
     private AuthenticationManager authenticationManager;
 
 
-    @GetMapping("/")
-    public List<VehicleOwner> getAllVehicleOwners(){
-        return vehicleOwnerService.getAllVehicleOwners();
-    }
-
     @GetMapping("/{ownerId}")
     public VehicleOwner getVehicleOwner(@PathVariable int ownerId){
         return vehicleOwnerService.getVehicleOwner(ownerId);
     }
-
     @PostMapping("/{ownerId}")
-    public void updateVehicleOwner(@RequestBody UpdateVehicleOwnerDTO updateVehicleOwnerDTO,@PathVariable int ownerId){
-        vehicleOwnerService.updateVehicleOwner(updateVehicleOwnerDTO,ownerId);
+    public MessageResponseDTO updateVehicleOwner(@RequestBody UpdateVehicleOwnerDTO updateVehicleOwnerDTO, @PathVariable int ownerId){
+        return vehicleOwnerService.updateVehicleOwner(updateVehicleOwnerDTO,ownerId);
     }
-
-
-
 
 
 }

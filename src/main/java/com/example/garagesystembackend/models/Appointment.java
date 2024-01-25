@@ -22,11 +22,11 @@ public class Appointment {
     @Column(name = "appointment_id")
     private int appointmentId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id",nullable = false)
     private VehicleOwner vehicleOwner;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id",nullable = false)
     private Vehicle vehicle;
 

@@ -1,5 +1,6 @@
 package com.example.garagesystembackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,12 +28,19 @@ public class Vehicle {
     @Column(name="model",nullable = false)
     private String model;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Owner_id",nullable = false)
     private VehicleOwner vehicleOwner;
 
-    @OneToMany(mappedBy = "vehicle")
+    @JsonIgnore
+    @OneToMany(mappedBy = "vehicle",fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
 
+    public Vehicle(String vehicleNo, String model, VehicleOwner vehicleOwner) {
+        this.vehicleNo = vehicleNo;
+        this.model = model;
+        this.vehicleOwner = vehicleOwner;
+    }
 }

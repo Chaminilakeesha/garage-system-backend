@@ -1,6 +1,8 @@
 package com.example.garagesystembackend;
 
 import com.example.garagesystembackend.filters.JwtAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +51,7 @@ public class SecurityConfiguration extends SecurityConfigurerAdapter<DefaultSecu
                 .permitAll()
                 .anyRequest()
                 .authenticated()
-                .and()
+                .and().cors().and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -70,4 +74,23 @@ public class SecurityConfiguration extends SecurityConfigurerAdapter<DefaultSecu
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+    }
+
+    @Bean
+    public WebMvcConfigurer getCorsConfiguration(){
+        return new WebMvcConfigurer() {
+            @Override
+            public void  addCorsMappings(CorsRegistry registry){
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedMethods("GET","POST","PUT","DELETE","UPDATE")
+                        .allowedHeaders("*");
+            }
+        };
+    }
+
 }

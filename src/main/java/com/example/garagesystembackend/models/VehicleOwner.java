@@ -1,5 +1,6 @@
 package com.example.garagesystembackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,11 +40,19 @@ public class VehicleOwner {
         this.mobileNo = mobileNo;
         this.password = password;
     }
-
-    @OneToMany(mappedBy = "vehicleOwner")
+    @JsonIgnore
+    @OneToMany(mappedBy = "vehicleOwner",fetch = FetchType.LAZY)
     private List<Vehicle> vehicles;
 
-    @OneToMany(mappedBy = "vehicleOwner")
+    @JsonIgnore
+    @OneToMany(mappedBy = "vehicleOwner",fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
+    public VehicleOwner(int ownerId, String ownerName, String email, String mobileNo, String password) {
+        this.ownerId = ownerId;
+        this.ownerName = ownerName;
+        this.email = email;
+        this.mobileNo = mobileNo;
+        this.password = password;
+    }
 }
