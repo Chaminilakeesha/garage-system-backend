@@ -43,4 +43,11 @@ public class Vehicle {
         this.model = model;
         this.vehicleOwner = vehicleOwner;
     }
+
+    public Vehicle(int vehicleId, String vehicleNo, String model, VehicleOwner vehicleOwner) {
+        this.vehicleId = vehicleId;
+        this.vehicleNo = vehicleNo;
+        this.model = model;
+        this.vehicleOwner = vehicleOwner;
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.garagesystembackend.services.interfaces;
 
 import com.example.garagesystembackend.DTO.requests.AddVehicleRequestDTO;
+import com.example.garagesystembackend.DTO.requests.UpdateVehicleRequestDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.models.Vehicle;
 
@@ -13,4 +14,6 @@ public interface IVehicleService {
     List<Vehicle> getAllVehicles(int ownerId);
 
     MessageResponseDTO deleteVehicle(int vehicleId);
+
+    MessageResponseDTO updateVehicle(UpdateVehicleRequestDTO updateVehicleRequestDTO);
 }

@@ -1,6 +1,7 @@
 package com.example.garagesystembackend.services;
 
 import com.example.garagesystembackend.DTO.requests.AddVehicleRequestDTO;
+import com.example.garagesystembackend.DTO.requests.UpdateVehicleRequestDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.models.Vehicle;
 import com.example.garagesystembackend.models.VehicleOwner;
@@ -24,7 +25,7 @@ public class VehicleService implements IVehicleService {
     @Override
     public MessageResponseDTO addVehicle(AddVehicleRequestDTO addVehicleRequestDTO, int ownerId) {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByOwnerId(ownerId);
-        Vehicle vehicle = new Vehicle(addVehicleRequestDTO.getVehicleNo(),addVehicleRequestDTO.getModel(),vehicleOwner);
+        Vehicle vehicle = new Vehicle(addVehicleRequestDTO.getVehicleNo(), addVehicleRequestDTO.getModel(),vehicleOwner);
         vehicleRepository.save(vehicle);
         return new MessageResponseDTO("Vehicle added successfully");
     }
@@ -39,5 +40,17 @@ public class VehicleService implements IVehicleService {
         Vehicle vehicle = vehicleRepository.findByVehicleId(vehicleId);
         vehicleRepository.delete(vehicle);
         return new MessageResponseDTO("Vehicle deleted successfully");
+    }
+
+    @Override
+    public MessageResponseDTO updateVehicle(UpdateVehicleRequestDTO updateVehicleRequestDTO) {
+        Vehicle selectedVehicle = vehicleRepository.findByVehicleId(updateVehicleRequestDTO.getVehicleId());
+        Vehicle vehicle = new Vehicle(
+                updateVehicleRequestDTO.getVehicleId(),
+                updateVehicleRequestDTO.getVehicleNo(),
+                updateVehicleRequestDTO.getModel(),
+                selectedVehicle.getVehicleOwner());
+        vehicleRepository.save(vehicle);
+        return new MessageResponseDTO("Vehicle updated successfully");
     }
 }

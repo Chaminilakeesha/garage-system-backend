@@ -1,6 +1,7 @@
 package com.example.garagesystembackend.controllers;
 
 import com.example.garagesystembackend.DTO.requests.AddVehicleRequestDTO;
+import com.example.garagesystembackend.DTO.requests.UpdateVehicleRequestDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.models.Vehicle;
 import com.example.garagesystembackend.services.VehicleService;
@@ -26,6 +27,10 @@ public class VehicleController {
         return vehicleService.getAllVehicles(ownerId);
     }
 
+    @PostMapping("/update")
+    public MessageResponseDTO updateVehicle(@RequestBody UpdateVehicleRequestDTO updateVehicleRequestDTO){
+        return vehicleService.updateVehicle(updateVehicleRequestDTO);
+    }
 
     @DeleteMapping("/delete/{vehicleId}")
     public MessageResponseDTO deleteVehicle(@PathVariable int vehicleId){
