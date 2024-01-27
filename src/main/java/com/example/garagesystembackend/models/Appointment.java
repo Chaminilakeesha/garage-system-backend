@@ -39,5 +39,7 @@ public class Appointment {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "is_approved")
+    private boolean isApproved;
 
 }
