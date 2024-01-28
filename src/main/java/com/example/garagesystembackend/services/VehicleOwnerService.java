@@ -26,7 +26,9 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     private VehicleOwnerRepository vehicleOwnerRepository;
 
     private PasswordEncoder passwordEncoder;
+
     private final AuthenticationManager authenticationManager;
+
     private final JwtUtils jwtUtils;
 
     public VehicleOwner getVehicleOwner(int ownerId){

@@ -1,15 +1,15 @@
 package com.example.garagesystembackend.repositories;
 
 import com.example.garagesystembackend.models.Appointment;
+import com.example.garagesystembackend.models.TimeSlot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface AppointmentRepository extends JpaRepository<Appointment,Integer>, JpaSpecificationExecutor<Appointment> {
+public interface TimeSlotRepository extends JpaRepository<TimeSlot,Integer>, JpaSpecificationExecutor<TimeSlot> {
 
-    public List<Appointment> findAllByVehicleOwnerOwnerId(int ownerId);
+    public List<TimeSlot> findAll();
 
+    public TimeSlot findBySlotId(int slotId);
 }
