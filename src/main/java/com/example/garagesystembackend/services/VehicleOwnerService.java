@@ -1,5 +1,6 @@
 package com.example.garagesystembackend.services;
 
+import com.example.garagesystembackend.DTO.requests.ForgotPasswordRequestDTO;
 import com.example.garagesystembackend.DTO.requests.LoginRequestDTO;
 import com.example.garagesystembackend.DTO.requests.SignUpRequestDTO;
 import com.example.garagesystembackend.DTO.requests.UpdateVehicleOwnerDTO;
@@ -36,8 +37,6 @@ public class VehicleOwnerService implements IVehicleOwnerService {
 
     private final JwtUtils jwtUtils;
 
-
-
     @Override
     public VehicleOwner getVehicleOwner(int ownerId){
         return vehicleOwnerRepository.findByOwnerId(ownerId);
@@ -61,9 +60,6 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     @Override
     public JwtResponseDTO registerVehicleOwner(SignUpRequestDTO signUpRequestDTO){
 
-//        if (VehicleOwnerRepository.existsByEmail(signUpRequestDTO.getEmail())) {
-//            throw new IllegalArgumentException("Email already exists");
-//        }
         VehicleOwner vehicleOwner = new VehicleOwner(
                 signUpRequestDTO.getName(),
                 signUpRequestDTO.getEmail(),
@@ -91,5 +87,16 @@ public class VehicleOwnerService implements IVehicleOwnerService {
         jwtUtils.addToBlacklist(extractTokenResponseDTO.getToken());
         return new MessageResponseDTO("Logged out successfully");
 
+    }
+
+    @Override
+    public MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO) {
+        VehicleOwner vehicleOwner = vehicleOwnerRepository.findByEmail(forgotPasswordRequestDTO.getEmail());
+        if(vehicleOwner == null){
+            return new MessageResponseDTO("User not found");
+        }else{
+
+        }
+        return new MessageResponseDTO("Password reset link sent to your email");
     }
 }

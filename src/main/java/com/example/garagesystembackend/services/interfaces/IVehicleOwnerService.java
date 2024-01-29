@@ -1,5 +1,6 @@
 package com.example.garagesystembackend.services.interfaces;
 
+import com.example.garagesystembackend.DTO.requests.ForgotPasswordRequestDTO;
 import com.example.garagesystembackend.DTO.requests.LoginRequestDTO;
 import com.example.garagesystembackend.DTO.requests.SignUpRequestDTO;
 import com.example.garagesystembackend.DTO.requests.UpdateVehicleOwnerDTO;
@@ -23,4 +24,6 @@ public interface IVehicleOwnerService {
     JwtResponseDTO loginVehicleOwner(LoginRequestDTO loginRequestDTO);
 
     MessageResponseDTO logoutVehicleOwner(HttpServletRequest request);
+
+    MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO);
 }

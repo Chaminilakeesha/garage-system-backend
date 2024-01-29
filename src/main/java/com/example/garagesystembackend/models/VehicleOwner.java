@@ -45,6 +45,10 @@ public class VehicleOwner {
     @OneToMany(mappedBy = "vehicleOwner",fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
+    @JsonIgnore
+    @OneToOne(mappedBy = "vehicleOwner",fetch = FetchType.LAZY)
+    private PasswordResetToken passwordResetToken;
+
     public VehicleOwner(int ownerId, String ownerName, String email, String mobileNo, String password) {
         this.ownerId = ownerId;
         this.ownerName = ownerName;

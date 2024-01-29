@@ -1,5 +1,6 @@
 package com.example.garagesystembackend.controllers;
 
+import com.example.garagesystembackend.DTO.requests.ForgotPasswordRequestDTO;
 import com.example.garagesystembackend.DTO.requests.LoginRequestDTO;
 import com.example.garagesystembackend.DTO.requests.SignUpRequestDTO;
 import com.example.garagesystembackend.DTO.responses.JwtResponseDTO;
@@ -37,10 +38,10 @@ public class AuthController {
         return vehicleOwnerService.logoutVehicleOwner(request);
     }
 
-//    @PostMapping("/forgotPassword")
-//    public ResponseEntity<LoginResponseDTO> forgotPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO){
-//        return ResponseEntity.ok(vehicleOwnerService.forgotPassword(forgotPasswordRequestDTO));
-//    }
+    @PostMapping("/forgotPassword")
+    public MessageResponseDTO forgotPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO){
+        return vehicleOwnerService.forgotPassword(forgotPasswordRequestDTO);
+   }
 //
 //    @PostMapping("/resetPassword")
 //    public ResponseEntity<LoginResponseDTO> resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO
