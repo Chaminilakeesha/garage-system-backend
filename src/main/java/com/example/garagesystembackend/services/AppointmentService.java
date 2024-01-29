@@ -47,7 +47,7 @@ public class AppointmentService implements IApoointmentService {
                 timeSlot,
                 bookAppointmentRequestDTO.getDate(),
                 bookAppointmentRequestDTO.getDescription(),
-                false
+                "Pending"
         );
         appointmentRepository.save(appointment);
         return new MessageResponseDTO("Appointment request made successfully");

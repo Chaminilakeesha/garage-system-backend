@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -43,16 +40,16 @@ public class Appointment {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "is_approved")
-    private boolean isApproved;
+    @Column(name = "status")
+    private String status;
 
-    public Appointment(VehicleOwner vehicleOwner, Vehicle vehicle, TimeSlot timeSlot, String date, String description, boolean isApproved) {
+    public Appointment(VehicleOwner vehicleOwner, Vehicle vehicle, TimeSlot timeSlot, String date, String description, String status) {
         this.vehicleOwner = vehicleOwner;
         this.vehicle = vehicle;
         this.timeSlot = timeSlot;
         this.date = date;
         this.description = description;
-        this.isApproved = isApproved;
+        this.status = status;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.garagesystembackend.filters;
 
+import com.example.garagesystembackend.DTO.responses.ExtractTokenResponseDTO;
 import com.example.garagesystembackend.services.UserDetailsServiceImpl;
 import com.example.garagesystembackend.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +28,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
-        String jwtToken = null;
-        String email = null;
-
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer")){
-            jwtToken= authorizationHeader.substring(7);
-            email = jwtUtils.extractEmail(jwtToken);
-
-        }
+        ExtractTokenResponseDTO extractTokenResponseDTO = extractTokenFromRequest(request);
+        String jwtToken = extractTokenResponseDTO.getToken();
+        String email = extractTokenResponseDTO.getEmail();
 
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
@@ -47,4 +42,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request,response);
-}}
+    }
+
+    public ExtractTokenResponseDTO extractTokenFromRequest(HttpServletRequest request) {
+        final String authorizationHeader = request.getHeader("Authorization");
+        ExtractTokenResponseDTO extractTokenResponseDTO = new ExtractTokenResponseDTO();
+
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer")){
+            extractTokenResponseDTO.setToken(authorizationHeader.substring(7));
+            extractTokenResponseDTO.setEmail(jwtUtils.extractEmail(extractTokenResponseDTO.getToken()));
+        }
+
+        return extractTokenResponseDTO;
+    }
+}

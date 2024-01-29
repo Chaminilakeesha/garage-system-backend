@@ -1,6 +1,5 @@
 package com.example.garagesystembackend.controllers;
 
-import com.example.garagesystembackend.DTO.requests.AddVehicleRequestDTO;
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.models.Appointment;

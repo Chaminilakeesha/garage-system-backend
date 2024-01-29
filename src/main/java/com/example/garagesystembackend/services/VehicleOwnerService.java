@@ -3,8 +3,10 @@ package com.example.garagesystembackend.services;
 import com.example.garagesystembackend.DTO.requests.LoginRequestDTO;
 import com.example.garagesystembackend.DTO.requests.SignUpRequestDTO;
 import com.example.garagesystembackend.DTO.requests.UpdateVehicleOwnerDTO;
+import com.example.garagesystembackend.DTO.responses.ExtractTokenResponseDTO;
 import com.example.garagesystembackend.DTO.responses.JwtResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
+import com.example.garagesystembackend.filters.JwtAuthenticationFilter;
 import com.example.garagesystembackend.models.VehicleOwner;
 import com.example.garagesystembackend.repositories.VehicleOwnerRepository;
 import com.example.garagesystembackend.services.interfaces.IVehicleOwnerService;
@@ -17,7 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
 @Service
@@ -25,16 +27,23 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     @Autowired
     private VehicleOwnerRepository vehicleOwnerRepository;
 
+    @Autowired
+    public JwtAuthenticationFilter jwtAuthenticationFilter;
+
     private PasswordEncoder passwordEncoder;
 
     private final AuthenticationManager authenticationManager;
 
     private final JwtUtils jwtUtils;
 
+
+
+    @Override
     public VehicleOwner getVehicleOwner(int ownerId){
         return vehicleOwnerRepository.findByOwnerId(ownerId);
     }
 
+    @Override
     public MessageResponseDTO updateVehicleOwner(UpdateVehicleOwnerDTO updateVehicleOwnerDTO, int ownerId){
         VehicleOwner selectedVehicleOwner = vehicleOwnerRepository.findByOwnerId(ownerId);
         VehicleOwner vehicleOwner = new VehicleOwner(
@@ -49,6 +58,7 @@ public class VehicleOwnerService implements IVehicleOwnerService {
 
     }
 
+    @Override
     public JwtResponseDTO registerVehicleOwner(SignUpRequestDTO signUpRequestDTO){
 
 //        if (VehicleOwnerRepository.existsByEmail(signUpRequestDTO.getEmail())) {
@@ -65,6 +75,7 @@ public class VehicleOwnerService implements IVehicleOwnerService {
         return new JwtResponseDTO(vehicleOwner.getOwnerId(),"User registered successfully",jwtToken);
     }
 
+    @Override
     public JwtResponseDTO loginVehicleOwner(LoginRequestDTO loginRequestDTO) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
         var vehicleOwner = vehicleOwnerRepository.findByEmail(loginRequestDTO.getEmail());
@@ -73,7 +84,12 @@ public class VehicleOwnerService implements IVehicleOwnerService {
 
     }
 
+    @Override
+    public MessageResponseDTO logoutVehicleOwner(HttpServletRequest request) {
+        ExtractTokenResponseDTO extractTokenResponseDTO = jwtAuthenticationFilter.extractTokenFromRequest(request);
+        System.out.println("token" + extractTokenResponseDTO.getToken());
+        jwtUtils.addToBlacklist(extractTokenResponseDTO.getToken());
+        return new MessageResponseDTO("Logged out successfully");
 
-
-
+    }
 }

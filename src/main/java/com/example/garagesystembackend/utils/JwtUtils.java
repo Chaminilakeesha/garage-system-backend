@@ -9,14 +9,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
 public class JwtUtils {
     public static final String SECURITY_KEY = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+
+    private final Set<String> blacklist = new HashSet<>();
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -49,7 +49,7 @@ public class JwtUtils {
 
     public Boolean isTokenValid(String token, UserDetails userDetails) {
         final String email = extractEmail(token);
-        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token) && !isBlacklisted(token));
     }
 
     private Boolean isTokenExpired(String token) {
@@ -61,7 +61,13 @@ public class JwtUtils {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public boolean isBlacklisted(String token) {
+        return blacklist.contains(token);
+    }
 
+    public void addToBlacklist(String token) {
+        blacklist.add(token);
+    }
 
     private Claims extractAllClaims(String token) {
         return Jwts
