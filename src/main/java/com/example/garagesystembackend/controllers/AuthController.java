@@ -2,6 +2,7 @@ package com.example.garagesystembackend.controllers;
 
 import com.example.garagesystembackend.DTO.requests.ForgotPasswordRequestDTO;
 import com.example.garagesystembackend.DTO.requests.LoginRequestDTO;
+import com.example.garagesystembackend.DTO.requests.ResetPasswordRequestDTO;
 import com.example.garagesystembackend.DTO.requests.SignUpRequestDTO;
 import com.example.garagesystembackend.DTO.responses.JwtResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -39,14 +41,16 @@ public class AuthController {
     }
 
     @PostMapping("/forgotPassword")
-    public MessageResponseDTO forgotPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO){
-        return vehicleOwnerService.forgotPassword(forgotPasswordRequestDTO);
+    public MessageResponseDTO forgotPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO,HttpServletRequest request){
+        return vehicleOwnerService.forgotPassword(forgotPasswordRequestDTO,request);
    }
-//
-//    @PostMapping("/resetPassword")
-//    public ResponseEntity<LoginResponseDTO> resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO
-//        return ResponseEntity.ok(vehicleOwnerService.resetPassword(resetPasswordRequestDTO
-//    }
+
+
+   //Should take token from the reset password link
+    @PostMapping("/resetPassword")
+    public MessageResponseDTO resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
+        return vehicleOwnerService.resetPassword(resetPasswordRequestDTO);
+    }
 
 
 }

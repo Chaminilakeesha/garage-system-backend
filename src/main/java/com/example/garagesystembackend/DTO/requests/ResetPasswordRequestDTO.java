@@ -12,5 +12,4 @@ import lombok.Setter;
 public class ResetPasswordRequestDTO {
     private String token;
     private String password;
-    private String confirmPassword;
 }

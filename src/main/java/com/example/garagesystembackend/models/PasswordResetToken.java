@@ -1,7 +1,13 @@
 package com.example.garagesystembackend.models;
 
-import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "password_reset_token")
 public class PasswordResetToken {
@@ -17,4 +23,13 @@ public class PasswordResetToken {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private VehicleOwner vehicleOwner;
+
+    @Column(name = "expiration", nullable = false)
+    private LocalDateTime expiration;
+
+    public PasswordResetToken(String token, VehicleOwner vehicleOwner, LocalDateTime expiration) {
+        this.token = token;
+        this.vehicleOwner = vehicleOwner;
+        this.expiration = expiration;
+    }
 }

@@ -1,32 +1,37 @@
 package com.example.garagesystembackend.services;
 
-import com.example.garagesystembackend.DTO.requests.ForgotPasswordRequestDTO;
-import com.example.garagesystembackend.DTO.requests.LoginRequestDTO;
-import com.example.garagesystembackend.DTO.requests.SignUpRequestDTO;
-import com.example.garagesystembackend.DTO.requests.UpdateVehicleOwnerDTO;
+import com.example.garagesystembackend.DTO.requests.*;
 import com.example.garagesystembackend.DTO.responses.ExtractTokenResponseDTO;
 import com.example.garagesystembackend.DTO.responses.JwtResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.filters.JwtAuthenticationFilter;
+import com.example.garagesystembackend.models.PasswordResetToken;
 import com.example.garagesystembackend.models.VehicleOwner;
+import com.example.garagesystembackend.repositories.PasswordResetTokenRepository;
 import com.example.garagesystembackend.repositories.VehicleOwnerRepository;
 import com.example.garagesystembackend.services.interfaces.IVehicleOwnerService;
 import com.example.garagesystembackend.utils.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
 public class VehicleOwnerService implements IVehicleOwnerService {
     @Autowired
     private VehicleOwnerRepository vehicleOwnerRepository;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Autowired
     public JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -36,6 +41,9 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     private final AuthenticationManager authenticationManager;
 
     private final JwtUtils jwtUtils;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public VehicleOwner getVehicleOwner(int ownerId){
@@ -90,13 +98,44 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     }
 
     @Override
-    public MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO) {
+    public MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO,HttpServletRequest request) {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByEmail(forgotPasswordRequestDTO.getEmail());
         if(vehicleOwner == null){
             return new MessageResponseDTO("User not found");
         }else{
+            LocalDateTime expiration = LocalDateTime.now().plusHours(1);
+            PasswordResetToken passwordResetToken = new PasswordResetToken(
+                    UUID.randomUUID().toString(),
+                    vehicleOwner,
+                    expiration
+            );
+            passwordResetTokenRepository.save(passwordResetToken);
 
+            SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
+            passwordResetEmail.setFrom("support@demo.com");
+            passwordResetEmail.setTo(vehicleOwner.getEmail());
+            passwordResetEmail.setSubject("Password Reset Request");
+            passwordResetEmail.setText("To reset your password, click the link below:\n"
+                    + "http://localhost:3000/resetpassword?token=" + passwordResetToken.getToken());
+
+            emailService.sendEmail(passwordResetEmail);
         }
         return new MessageResponseDTO("Password reset link sent to your email");
+    }
+
+    @Override
+    public MessageResponseDTO resetPassword(ResetPasswordRequestDTO resetPasswordRequestDTO) {
+        VehicleOwner vehicleOwner = passwordResetTokenRepository.findVehicleOwnerByToken(resetPasswordRequestDTO.getToken());
+        boolean isTokenExpired = passwordResetTokenRepository.findByToken(resetPasswordRequestDTO.getToken()).getExpiration().isBefore(LocalDateTime.now());
+        if(vehicleOwner == null){
+            return new MessageResponseDTO("Invalid token");
+        }else if (!isTokenExpired){
+            vehicleOwner.setPassword(passwordEncoder.encode(resetPasswordRequestDTO.getPassword()));
+            vehicleOwnerRepository.save(vehicleOwner);
+            passwordResetTokenRepository.delete(passwordResetTokenRepository.findByToken(resetPasswordRequestDTO.getToken()));
+        }else{
+            return new MessageResponseDTO("Token expired");
+        }
+        return new MessageResponseDTO("Password reset successfully");
     }
 }
