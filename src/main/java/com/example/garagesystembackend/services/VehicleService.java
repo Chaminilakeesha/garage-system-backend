@@ -25,9 +25,13 @@ public class VehicleService implements IVehicleService {
     @Override
     public MessageResponseDTO addVehicle(AddVehicleRequestDTO addVehicleRequestDTO, int ownerId) {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByOwnerId(ownerId);
-        Vehicle vehicle = new Vehicle(addVehicleRequestDTO.getVehicleNo(), addVehicleRequestDTO.getModel(),vehicleOwner);
-        vehicleRepository.save(vehicle);
-        return new MessageResponseDTO("success","Vehicle added successfully");
+        if (vehicleRepository.existsByVehicleNo(addVehicleRequestDTO.getVehicleNo())){
+            return new MessageResponseDTO("error","Vehicle already exists");
+        }else {
+            Vehicle vehicle = new Vehicle(addVehicleRequestDTO.getVehicleNo(), addVehicleRequestDTO.getModel(), vehicleOwner);
+            vehicleRepository.save(vehicle);
+            return new MessageResponseDTO("success", "Vehicle added successfully");
+        }
     }
 
     @Override

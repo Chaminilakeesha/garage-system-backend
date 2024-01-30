@@ -13,4 +13,9 @@ public class JwtResponseDTO {
     private String message;
     private String token;
 
+
+    public JwtResponseDTO(String type, String message) {
+        this.type = type;
+        this.message = message;
+    }
 }

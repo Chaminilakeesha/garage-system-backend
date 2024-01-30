@@ -14,5 +14,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle,Integer>, JpaSp
 
     public Vehicle findByVehicleId(int vehicleId);
 
+    boolean existsByVehicleNo(String vehicleNo);
+
 
 }
