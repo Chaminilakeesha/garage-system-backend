@@ -41,12 +41,10 @@ public class AuthController {
     }
 
     @PostMapping("/forgotPassword")
-    public MessageResponseDTO forgotPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO,HttpServletRequest request){
-        return vehicleOwnerService.forgotPassword(forgotPasswordRequestDTO,request);
+    public MessageResponseDTO forgotPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO){
+        return vehicleOwnerService.forgotPassword(forgotPasswordRequestDTO);
    }
 
-
-   //Should take token from the reset password link
     @PostMapping("/resetPassword")
     public MessageResponseDTO resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
         return vehicleOwnerService.resetPassword(resetPasswordRequestDTO);

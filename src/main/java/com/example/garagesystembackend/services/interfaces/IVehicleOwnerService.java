@@ -22,7 +22,7 @@ public interface IVehicleOwnerService {
 
     MessageResponseDTO logoutVehicleOwner(HttpServletRequest request);
 
-    MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO,HttpServletRequest request);
+    MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO);
 
     MessageResponseDTO resetPassword(ResetPasswordRequestDTO resetPasswordRequestDTO);
 }

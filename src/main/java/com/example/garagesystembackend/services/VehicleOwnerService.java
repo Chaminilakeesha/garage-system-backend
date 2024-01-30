@@ -98,7 +98,7 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     }
 
     @Override
-    public MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO,HttpServletRequest request) {
+    public MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO) {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByEmail(forgotPasswordRequestDTO.getEmail());
         if(vehicleOwner == null){
             return new MessageResponseDTO("User not found");
@@ -125,8 +125,9 @@ public class VehicleOwnerService implements IVehicleOwnerService {
 
     @Override
     public MessageResponseDTO resetPassword(ResetPasswordRequestDTO resetPasswordRequestDTO) {
-        VehicleOwner vehicleOwner = passwordResetTokenRepository.findVehicleOwnerByToken(resetPasswordRequestDTO.getToken());
-        boolean isTokenExpired = passwordResetTokenRepository.findByToken(resetPasswordRequestDTO.getToken()).getExpiration().isBefore(LocalDateTime.now());
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(resetPasswordRequestDTO.getToken());
+        VehicleOwner vehicleOwner = passwordResetToken.getVehicleOwner();
+        boolean isTokenExpired = passwordResetToken.getExpiration().isBefore(LocalDateTime.now());
         if(vehicleOwner == null){
             return new MessageResponseDTO("Invalid token");
         }else if (!isTokenExpired){
