@@ -27,7 +27,7 @@ public class VehicleService implements IVehicleService {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByOwnerId(ownerId);
         Vehicle vehicle = new Vehicle(addVehicleRequestDTO.getVehicleNo(), addVehicleRequestDTO.getModel(),vehicleOwner);
         vehicleRepository.save(vehicle);
-        return new MessageResponseDTO("Vehicle added successfully");
+        return new MessageResponseDTO("success","Vehicle added successfully");
     }
 
     @Override
@@ -39,7 +39,7 @@ public class VehicleService implements IVehicleService {
     public MessageResponseDTO deleteVehicle(int vehicleId) {
         Vehicle vehicle = vehicleRepository.findByVehicleId(vehicleId);
         vehicleRepository.delete(vehicle);
-        return new MessageResponseDTO("Vehicle deleted successfully");
+        return new MessageResponseDTO("success","Vehicle deleted successfully");
     }
 
     @Override
@@ -51,6 +51,6 @@ public class VehicleService implements IVehicleService {
                 updateVehicleRequestDTO.getModel(),
                 selectedVehicle.getVehicleOwner());
         vehicleRepository.save(vehicle);
-        return new MessageResponseDTO("Vehicle updated successfully");
+        return new MessageResponseDTO("success","Vehicle updated successfully");
     }
 }

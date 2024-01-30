@@ -30,4 +30,10 @@ public class VehicleOwnerController {
     public MessageResponseDTO updateVehicleOwner(@RequestBody UpdateVehicleOwnerDTO updateVehicleOwnerDTO, @PathVariable int ownerId){
         return vehicleOwnerService.updateVehicleOwner(updateVehicleOwnerDTO,ownerId);
     }
+
+    @PostMapping("changePassword/{ownerId}")
+    public MessageResponseDTO changePassword(@RequestBody UpdateVehicleOwnerDTO updateVehicleOwnerDTO, @PathVariable int ownerId){
+        return vehicleOwnerService.updateVehicleOwner(updateVehicleOwnerDTO,ownerId);
+    }
+
 }

@@ -25,4 +25,6 @@ public interface IVehicleOwnerService {
     MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO);
 
     MessageResponseDTO resetPassword(ResetPasswordRequestDTO resetPasswordRequestDTO);
+
+    MessageResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, int ownerId);
 }

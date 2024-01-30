@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class JwtResponseDTO {
     private int vehicleOwnerId;
+    private String type;
     private String message;
     private String token;
 

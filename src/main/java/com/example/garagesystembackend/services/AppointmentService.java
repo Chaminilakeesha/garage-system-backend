@@ -50,7 +50,7 @@ public class AppointmentService implements IApoointmentService {
                 "Pending"
         );
         appointmentRepository.save(appointment);
-        return new MessageResponseDTO("Appointment request made successfully");
+        return new MessageResponseDTO("success","Appointment request made successfully");
     }
 
     @Override

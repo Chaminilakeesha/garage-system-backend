@@ -9,4 +9,9 @@ import java.util.List;
 
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken,Integer>, JpaSpecificationExecutor<PasswordResetToken> {
     public PasswordResetToken findByToken(String token);
+
+    public PasswordResetToken findByVehicleOwner(VehicleOwner vehicleOwner);
+
+    boolean existsByVehicleOwner(VehicleOwner vehicleOwner);
+
 }

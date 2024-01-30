@@ -61,7 +61,7 @@ public class VehicleOwnerService implements IVehicleOwnerService {
                 selectedVehicleOwner.getPassword()
         );
         vehicleOwnerRepository.save(vehicleOwner);
-        return new MessageResponseDTO("Vehicle Owner updated successfully");
+        return new MessageResponseDTO("success","Vehicle Owner updated successfully");
 
     }
 
@@ -76,7 +76,7 @@ public class VehicleOwnerService implements IVehicleOwnerService {
         );
         vehicleOwnerRepository.save(vehicleOwner);
         var jwtToken = jwtUtils.generateToken(vehicleOwner.getEmail());
-        return new JwtResponseDTO(vehicleOwner.getOwnerId(),"User registered successfully",jwtToken);
+        return new JwtResponseDTO(vehicleOwner.getOwnerId(),"success","User registered successfully",jwtToken);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class VehicleOwnerService implements IVehicleOwnerService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
         var vehicleOwner = vehicleOwnerRepository.findByEmail(loginRequestDTO.getEmail());
         var jwtToken = jwtUtils.generateToken(vehicleOwner.getEmail());
-        return new JwtResponseDTO(vehicleOwner.getOwnerId(),"User login successfully",jwtToken);
+        return new JwtResponseDTO(vehicleOwner.getOwnerId(),"success","User login successfully",jwtToken);
 
     }
 
@@ -93,7 +93,7 @@ public class VehicleOwnerService implements IVehicleOwnerService {
         ExtractTokenResponseDTO extractTokenResponseDTO = jwtAuthenticationFilter.extractTokenFromRequest(request);
         System.out.println("token" + extractTokenResponseDTO.getToken());
         jwtUtils.addToBlacklist(extractTokenResponseDTO.getToken());
-        return new MessageResponseDTO("Logged out successfully");
+        return new MessageResponseDTO("success","Logged out successfully");
 
     }
 
@@ -101,8 +101,11 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     public MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO) {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByEmail(forgotPasswordRequestDTO.getEmail());
         if(vehicleOwner == null){
-            return new MessageResponseDTO("User not found");
+            return new MessageResponseDTO("error","User not found");
         }else{
+            if (passwordResetTokenRepository.existsByVehicleOwner(vehicleOwner)) {
+                passwordResetTokenRepository.delete(passwordResetTokenRepository.findByVehicleOwner(vehicleOwner));
+            }
             LocalDateTime expiration = LocalDateTime.now().plusHours(1);
             PasswordResetToken passwordResetToken = new PasswordResetToken(
                     UUID.randomUUID().toString(),
@@ -120,7 +123,7 @@ public class VehicleOwnerService implements IVehicleOwnerService {
 
             emailService.sendEmail(passwordResetEmail);
         }
-        return new MessageResponseDTO("Password reset link sent to your email");
+        return new MessageResponseDTO("success","Password reset link sent to your email");
     }
 
     @Override
@@ -129,14 +132,28 @@ public class VehicleOwnerService implements IVehicleOwnerService {
         VehicleOwner vehicleOwner = passwordResetToken.getVehicleOwner();
         boolean isTokenExpired = passwordResetToken.getExpiration().isBefore(LocalDateTime.now());
         if(vehicleOwner == null){
-            return new MessageResponseDTO("Invalid token");
-        }else if (!isTokenExpired){
+            return new MessageResponseDTO("error","Invalid token");
+        }else if (isTokenExpired){
+            return new MessageResponseDTO("error","Token expired");
+        }else {
             vehicleOwner.setPassword(passwordEncoder.encode(resetPasswordRequestDTO.getPassword()));
             vehicleOwnerRepository.save(vehicleOwner);
             passwordResetTokenRepository.delete(passwordResetTokenRepository.findByToken(resetPasswordRequestDTO.getToken()));
-        }else{
-            return new MessageResponseDTO("Token expired");
+            return new MessageResponseDTO("success","Password reset successfully");
         }
-        return new MessageResponseDTO("Password reset successfully");
+    }
+
+    @Override
+    public MessageResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, int ownerId) {
+        VehicleOwner vehicleOwner = vehicleOwnerRepository.findByOwnerId(ownerId);
+        String currentPassword = passwordEncoder.encode(changePasswordRequestDTO.getCurrentPassword());
+        if (!passwordEncoder.matches(currentPassword, vehicleOwner.getPassword())) {
+            return new MessageResponseDTO("error","Current password is incorrect");
+        }else {
+            vehicleOwner.setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
+            vehicleOwnerRepository.save(vehicleOwner);
+            return new MessageResponseDTO("success","Password changed successfully");
+        }
+
     }
 }

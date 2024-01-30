@@ -25,7 +25,7 @@ public class PasswordResetToken {
     private String token;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false,unique = true)
     private VehicleOwner vehicleOwner;
 
     @Column(name = "expiration", nullable = false)
