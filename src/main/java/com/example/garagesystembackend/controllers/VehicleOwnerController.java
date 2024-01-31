@@ -1,5 +1,6 @@
 package com.example.garagesystembackend.controllers;
 
+import com.example.garagesystembackend.DTO.requests.ChangePasswordRequestDTO;
 import com.example.garagesystembackend.DTO.requests.UpdateVehicleOwnerDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.models.VehicleOwner;
@@ -32,8 +33,8 @@ public class VehicleOwnerController {
     }
 
     @PostMapping("changePassword/{ownerId}")
-    public MessageResponseDTO changePassword(@RequestBody UpdateVehicleOwnerDTO updateVehicleOwnerDTO, @PathVariable int ownerId){
-        return vehicleOwnerService.updateVehicleOwner(updateVehicleOwnerDTO,ownerId);
+    public MessageResponseDTO changePassword(@RequestBody ChangePasswordRequestDTO changePasswordRequestDTO, @PathVariable int ownerId){
+        return vehicleOwnerService.changePassword(changePasswordRequestDTO,ownerId);
     }
 
 }

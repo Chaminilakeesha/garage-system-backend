@@ -14,4 +14,6 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
 
     boolean existsByVehicleOwner(VehicleOwner vehicleOwner);
 
+    boolean existsByToken(String token);
+
 }

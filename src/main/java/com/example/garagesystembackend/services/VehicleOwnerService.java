@@ -136,13 +136,14 @@ public class VehicleOwnerService implements IVehicleOwnerService {
 
     @Override
     public MessageResponseDTO resetPassword(ResetPasswordRequestDTO resetPasswordRequestDTO) {
+        if (!passwordResetTokenRepository.existsByToken(resetPasswordRequestDTO.getToken())){
+            return new MessageResponseDTO("error","Invalid token.Try requesting new password reset link");
+        }
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(resetPasswordRequestDTO.getToken());
         VehicleOwner vehicleOwner = passwordResetToken.getVehicleOwner();
         boolean isTokenExpired = passwordResetToken.getExpiration().isBefore(LocalDateTime.now());
-        if(vehicleOwner == null){
-            return new MessageResponseDTO("error","Invalid token");
-        }else if (isTokenExpired){
-            return new MessageResponseDTO("error","Token expired");
+        if (isTokenExpired){
+            return new MessageResponseDTO("error","Token expired.Try requesting new password reset link");
         }else {
             vehicleOwner.setPassword(passwordEncoder.encode(resetPasswordRequestDTO.getPassword()));
             vehicleOwnerRepository.save(vehicleOwner);
