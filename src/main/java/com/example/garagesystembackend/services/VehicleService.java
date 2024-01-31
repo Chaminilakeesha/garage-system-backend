@@ -5,6 +5,7 @@ import com.example.garagesystembackend.DTO.requests.UpdateVehicleRequestDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.models.Vehicle;
 import com.example.garagesystembackend.models.VehicleOwner;
+import com.example.garagesystembackend.repositories.AppointmentRepository;
 import com.example.garagesystembackend.repositories.VehicleOwnerRepository;
 import com.example.garagesystembackend.repositories.VehicleRepository;
 import com.example.garagesystembackend.services.interfaces.IVehicleService;
@@ -21,6 +22,9 @@ public class VehicleService implements IVehicleService {
 
     @Autowired
     private VehicleOwnerRepository vehicleOwnerRepository;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     @Override
     public MessageResponseDTO addVehicle(AddVehicleRequestDTO addVehicleRequestDTO, int ownerId) {
@@ -41,6 +45,9 @@ public class VehicleService implements IVehicleService {
 
     @Override
     public MessageResponseDTO deleteVehicle(int vehicleId) {
+        if(appointmentRepository.existsByVehicleVehicleId(vehicleId)){
+            return new MessageResponseDTO("error","Vehicle cannot be deleted as it has an appointment");
+        }
         Vehicle vehicle = vehicleRepository.findByVehicleId(vehicleId);
         vehicleRepository.delete(vehicle);
         return new MessageResponseDTO("success","Vehicle deleted successfully");
