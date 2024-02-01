@@ -2,10 +2,12 @@ package com.example.garagesystembackend.controllers;
 
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
+import com.example.garagesystembackend.kafka.producer.KafkaProducer;
 import com.example.garagesystembackend.models.Appointment;
 import com.example.garagesystembackend.models.TimeSlot;
 import com.example.garagesystembackend.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +18,9 @@ public class AppointmentController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private KafkaProducer kafkaProducer;
 
     @PostMapping("/reserve/{ownerId}")
     public MessageResponseDTO bookAppointment(@RequestBody BookAppointmentRequestDTO bookAppointmentRequestDTO, @PathVariable int ownerId){
@@ -31,5 +36,18 @@ public class AppointmentController {
     public List<TimeSlot> getAllTimeSlots(){
         return appointmentService.getAllTimeSlots();
     }
+
+//    @GetMapping("/test/{message}")
+//    public ResponseEntity<String> test(@PathVariable String message){
+//        kafkaProducer.sendMessage(message);
+//        return ResponseEntity.ok("Message sent");
+//    }
+
+    @PostMapping("/test")
+    public ResponseEntity<String> test(@RequestBody Appointment appointment){
+        kafkaProducer.sendMessage(appointment);
+        return ResponseEntity.ok("Message sent");
+    }
+
 
 }
