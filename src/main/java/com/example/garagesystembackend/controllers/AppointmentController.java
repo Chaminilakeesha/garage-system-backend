@@ -19,9 +19,6 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @Autowired
-    private KafkaProducer kafkaProducer;
-
     @PostMapping("/reserve/{ownerId}")
     public MessageResponseDTO bookAppointment(@RequestBody BookAppointmentRequestDTO bookAppointmentRequestDTO, @PathVariable int ownerId){
         return appointmentService.bookAppointment(bookAppointmentRequestDTO,ownerId);
@@ -37,17 +34,6 @@ public class AppointmentController {
         return appointmentService.getAllTimeSlots();
     }
 
-//    @GetMapping("/test/{message}")
-//    public ResponseEntity<String> test(@PathVariable String message){
-//        kafkaProducer.sendMessage(message);
-//        return ResponseEntity.ok("Message sent");
-//    }
-
-    @PostMapping("/test")
-    public ResponseEntity<String> test(@RequestBody Appointment appointment){
-        kafkaProducer.sendMessage(appointment);
-        return ResponseEntity.ok("Message sent");
-    }
 
 
 }

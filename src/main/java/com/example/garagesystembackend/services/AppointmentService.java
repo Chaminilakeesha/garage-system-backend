@@ -2,6 +2,7 @@ package com.example.garagesystembackend.services;
 
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
+import com.example.garagesystembackend.kafka.producer.KafkaProducer;
 import com.example.garagesystembackend.models.Appointment;
 import com.example.garagesystembackend.models.TimeSlot;
 import com.example.garagesystembackend.models.Vehicle;
@@ -31,6 +32,9 @@ public class AppointmentService implements IApoointmentService {
     @Autowired
     private VehicleRepository VehicleRepository;
 
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
     @Override
     public List<Appointment> getAllAppointments(int ownerId) {
         return appointmentRepository.findAllByVehicleOwnerOwnerId(ownerId);
@@ -49,6 +53,9 @@ public class AppointmentService implements IApoointmentService {
                 bookAppointmentRequestDTO.getDescription(),
                 "Pending"
         );
+        System.out.println("start");
+        kafkaProducer.sendMessage("appointments",appointment);
+        System.out.println("end");
         appointmentRepository.save(appointment);
         return new MessageResponseDTO("success","Appointment request made successfully");
     }

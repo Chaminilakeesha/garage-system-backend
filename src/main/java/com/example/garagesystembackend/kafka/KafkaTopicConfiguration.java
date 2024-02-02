@@ -18,3 +18,4 @@ public class KafkaTopicConfiguration {
         return TopicBuilder.name("appointments").build();
     }
 }
+

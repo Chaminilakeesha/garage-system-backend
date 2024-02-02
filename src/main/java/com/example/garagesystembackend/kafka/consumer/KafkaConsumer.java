@@ -13,10 +13,6 @@ public class KafkaConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumer.class);
 
     @KafkaListener(topics = "appointments", groupId = "garage-system")
-//    public void listen(String message) {
-//        System.out.println("Received message: " + message);
-//        LOGGER.info(String.format("Consumed message -> %s", message));
-//    }
     public void listen(Appointment appointment) {
         LOGGER.info(String.format("Consumed message -> %s", appointment.toString()));
     }
