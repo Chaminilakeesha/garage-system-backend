@@ -1,7 +1,9 @@
 package com.example.garagesystembackend.kafka.producer;
 
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
+import com.example.garagesystembackend.DTO.responses.AppointmentStatusResponseDTO;
 import com.example.garagesystembackend.models.Appointment;
+import com.example.garagesystembackend.services.AppointmentService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,19 +22,24 @@ public class KafkaProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaProducer.class);
 
     @Autowired
-    private KafkaTemplate<String, Appointment> kafkaTemplate;
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void sendMessage(String topic,Appointment appointment) {
-        LOGGER.info(String.format("Producing message -> %s", appointment.toString()));
-        Message<Appointment> message = MessageBuilder
-                .withPayload(appointment)
+    private <T> void sendMessage(String topic, T payload) {
+        LOGGER.info("Producing message -> {}", payload.toString());
+        Message<T> message = MessageBuilder
+                .withPayload(payload)
                 .setHeader(KafkaHeaders.TOPIC, topic)
                 .build();
         kafkaTemplate.send(message);
         System.out.println(message);
     }
 
+    public void sendAppointment(String topic, Appointment appointment) {
+        sendMessage(topic, appointment);
+    }
 
-
+    public void sendAppointmentStatus(String topic, AppointmentStatusResponseDTO appointmentStatusResponseDTO) {
+        sendMessage(topic, appointmentStatusResponseDTO);
+    }
 
 }

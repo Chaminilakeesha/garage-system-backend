@@ -8,14 +8,14 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfiguration {
 
-//    @Bean
-//    public NewTopic appointmentsTopic() {
-//        return TopicBuilder.name("appointments").build();
-//    }
-
     @Bean
     public NewTopic appointmentsTopic() {
         return TopicBuilder.name("appointments").build();
+    }
+
+    @Bean
+    public NewTopic appointmentStatusTopic() {
+        return TopicBuilder.name("appointment-status").build();
     }
 }
 

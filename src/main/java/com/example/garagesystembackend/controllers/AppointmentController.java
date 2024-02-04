@@ -1,6 +1,7 @@
 package com.example.garagesystembackend.controllers;
 
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
+import com.example.garagesystembackend.DTO.responses.AppointmentStatusResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.kafka.producer.KafkaProducer;
 import com.example.garagesystembackend.models.Appointment;
@@ -19,6 +20,9 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+    @Autowired
+    private KafkaProducer kafkaProducer;
+
     @PostMapping("/reserve/{ownerId}")
     public MessageResponseDTO bookAppointment(@RequestBody BookAppointmentRequestDTO bookAppointmentRequestDTO, @PathVariable int ownerId){
         return appointmentService.bookAppointment(bookAppointmentRequestDTO,ownerId);
@@ -34,6 +38,9 @@ public class AppointmentController {
         return appointmentService.getAllTimeSlots();
     }
 
-
+    @PostMapping("/updateStatus")
+    public void sendAppointmentStatus(@RequestBody AppointmentStatusResponseDTO appointmentStatusResponseDTO){
+        kafkaProducer.sendAppointmentStatus("appointment-status",appointmentStatusResponseDTO);
+    }
 
 }

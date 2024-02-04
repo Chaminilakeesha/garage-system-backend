@@ -1,6 +1,7 @@
 package com.example.garagesystembackend.services;
 
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
+import com.example.garagesystembackend.DTO.responses.AppointmentStatusResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.kafka.producer.KafkaProducer;
 import com.example.garagesystembackend.models.Appointment;
@@ -11,14 +12,14 @@ import com.example.garagesystembackend.repositories.AppointmentRepository;
 import com.example.garagesystembackend.repositories.TimeSlotRepository;
 import com.example.garagesystembackend.repositories.VehicleOwnerRepository;
 import com.example.garagesystembackend.repositories.VehicleRepository;
-import com.example.garagesystembackend.services.interfaces.IApoointmentService;
+import com.example.garagesystembackend.services.interfaces.IAppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class AppointmentService implements IApoointmentService {
+public class AppointmentService implements IAppointmentService {
 
     @Autowired
     private AppointmentRepository appointmentRepository;
@@ -51,18 +52,23 @@ public class AppointmentService implements IApoointmentService {
                 timeSlot,
                 bookAppointmentRequestDTO.getDate(),
                 bookAppointmentRequestDTO.getDescription(),
-                "Pending"
+                null
         );
-        System.out.println("start");
-        kafkaProducer.sendMessage("appointments",appointment);
-        System.out.println("end");
-        appointmentRepository.save(appointment);
+        appointment = appointmentRepository.save(appointment);
+        kafkaProducer.sendAppointment("appointments",appointment);
         return new MessageResponseDTO("success","Appointment request made successfully");
     }
 
     @Override
     public List<TimeSlot> getAllTimeSlots() {
         return timeSlotRepository.findAll();
+    }
+
+    @Override
+    public void updateAppointmentStatus(AppointmentStatusResponseDTO appointmentStatusResponseDTO) {
+        Appointment appointment = appointmentRepository.findByAppointmentId(appointmentStatusResponseDTO.getAppointmentId());
+        appointment.setStatus(appointmentStatusResponseDTO.getStatus());
+        appointmentRepository.save(appointment);
     }
 
 }
