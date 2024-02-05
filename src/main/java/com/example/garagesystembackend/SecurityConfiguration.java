@@ -45,7 +45,7 @@ public class SecurityConfiguration extends SecurityConfigurerAdapter<DefaultSecu
         return http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .antMatchers("/auth/**")
+                .antMatchers("/auth/**","/ws/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

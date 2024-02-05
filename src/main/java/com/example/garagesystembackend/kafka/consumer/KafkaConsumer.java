@@ -20,8 +20,8 @@ public class KafkaConsumer {
     @Autowired
     private AppointmentService appointmentService;
 
-//    @Autowired
-//    private SimpMessagingTemplate webSocketMessagingTemplate;
+    @Autowired
+    private SimpMessagingTemplate webSocketMessagingTemplate;
 
     @KafkaListener(topics = {"appointments", "appointment-status"}, groupId = "garage-system")
     public void listen(ConsumerRecord<String, Object> record) {
@@ -33,7 +33,7 @@ public class KafkaConsumer {
             } else if (message instanceof AppointmentStatusResponseDTO) {
                 appointmentService.updateAppointmentStatus((AppointmentStatusResponseDTO) message);
                 LOGGER.info("Consumed appointment status -> {}", message);
-//                webSocketMessagingTemplate.convertAndSend("/topic/appointment-status", message);
+                webSocketMessagingTemplate.convertAndSend("/topic/appointment-status", message);
             } else {
                 LOGGER.warn("Unsupported message type: {}", message.getClass());
             }
