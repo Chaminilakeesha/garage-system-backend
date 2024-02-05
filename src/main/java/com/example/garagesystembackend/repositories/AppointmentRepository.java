@@ -14,5 +14,4 @@ public interface AppointmentRepository extends JpaRepository<Appointment,Integer
 
     public Appointment findByAppointmentId(int appointmentId);
     boolean existsByVehicleVehicleId(int vehicleId);
-
 }

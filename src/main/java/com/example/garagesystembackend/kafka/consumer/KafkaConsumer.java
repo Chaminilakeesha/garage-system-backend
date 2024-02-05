@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Service
 public class KafkaConsumer {
@@ -18,6 +19,9 @@ public class KafkaConsumer {
 
     @Autowired
     private AppointmentService appointmentService;
+
+//    @Autowired
+//    private SimpMessagingTemplate webSocketMessagingTemplate;
 
     @KafkaListener(topics = {"appointments", "appointment-status"}, groupId = "garage-system")
     public void listen(ConsumerRecord<String, Object> record) {
@@ -29,6 +33,7 @@ public class KafkaConsumer {
             } else if (message instanceof AppointmentStatusResponseDTO) {
                 appointmentService.updateAppointmentStatus((AppointmentStatusResponseDTO) message);
                 LOGGER.info("Consumed appointment status -> {}", message);
+//                webSocketMessagingTemplate.convertAndSend("/topic/appointment-status", message);
             } else {
                 LOGGER.warn("Unsupported message type: {}", message.getClass());
             }

@@ -17,4 +17,5 @@ public interface IAppointmentService {
     List<TimeSlot> getAllTimeSlots();
 
     void updateAppointmentStatus(AppointmentStatusResponseDTO appointmentStatusResponseDTO);
+
 }
