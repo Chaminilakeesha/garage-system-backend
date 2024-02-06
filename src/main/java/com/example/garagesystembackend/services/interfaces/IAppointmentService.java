@@ -1,6 +1,7 @@
 package com.example.garagesystembackend.services.interfaces;
 
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
+import com.example.garagesystembackend.DTO.requests.GetAppointmentByStatusRequestDTO;
 import com.example.garagesystembackend.DTO.responses.AppointmentStatusResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.models.Appointment;
@@ -9,6 +10,8 @@ import com.example.garagesystembackend.models.TimeSlot;
 import java.util.List;
 
 public interface IAppointmentService {
+
+    List<Appointment> getAllAppointments(GetAppointmentByStatusRequestDTO getAppointmentByStatusRequestDTO);
 
     List<Appointment> getAllAppointments(int ownerId);
 

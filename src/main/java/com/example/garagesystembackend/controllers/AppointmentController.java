@@ -1,6 +1,7 @@
 package com.example.garagesystembackend.controllers;
 
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
+import com.example.garagesystembackend.DTO.requests.GetAppointmentByStatusRequestDTO;
 import com.example.garagesystembackend.DTO.responses.AppointmentStatusResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.kafka.producer.KafkaProducer;
@@ -32,6 +33,11 @@ public class AppointmentController {
     @GetMapping("/all/{ownerId}")
     public List<Appointment> getAllAppointments(@PathVariable int ownerId){
         return appointmentService.getAllAppointments(ownerId);
+    }
+
+    @PostMapping("/all")
+    public List<Appointment> getAllAppointments(@RequestBody GetAppointmentByStatusRequestDTO getAppointmentByStatusRequestDTO){
+        return appointmentService.getAllAppointments(getAppointmentByStatusRequestDTO);
     }
 
     @GetMapping("/timeslots")

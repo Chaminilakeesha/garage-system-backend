@@ -1,6 +1,7 @@
 package com.example.garagesystembackend.services;
 
 import com.example.garagesystembackend.DTO.requests.BookAppointmentRequestDTO;
+import com.example.garagesystembackend.DTO.requests.GetAppointmentByStatusRequestDTO;
 import com.example.garagesystembackend.DTO.responses.AppointmentStatusResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.kafka.producer.KafkaProducer;
@@ -37,6 +38,12 @@ public class AppointmentService implements IAppointmentService {
     private KafkaProducer kafkaProducer;
 
     @Override
+    public List<Appointment> getAllAppointments(GetAppointmentByStatusRequestDTO getAppointmentByStatusRequestDTO) {
+        return appointmentRepository.findAllByVehicleOwnerOwnerIdAndStatus(getAppointmentByStatusRequestDTO.getOwnerId(),getAppointmentByStatusRequestDTO.getStatus());
+
+    }
+
+    @Override
     public List<Appointment> getAllAppointments(int ownerId) {
         return appointmentRepository.findAllByVehicleOwnerOwnerId(ownerId);
     }
@@ -52,7 +59,7 @@ public class AppointmentService implements IAppointmentService {
                 timeSlot,
                 bookAppointmentRequestDTO.getDate(),
                 bookAppointmentRequestDTO.getDescription(),
-                null
+                "Pending"
         );
         appointment = appointmentRepository.save(appointment);
         kafkaProducer.sendAppointment("appointments",appointment);
