@@ -6,8 +6,10 @@ import com.example.garagesystembackend.DTO.responses.JwtResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
 import com.example.garagesystembackend.filters.JwtAuthenticationFilter;
 import com.example.garagesystembackend.models.PasswordResetToken;
+import com.example.garagesystembackend.models.RefreshToken;
 import com.example.garagesystembackend.models.VehicleOwner;
 import com.example.garagesystembackend.repositories.PasswordResetTokenRepository;
+//import com.example.garagesystembackend.repositories.RefreshTokenRepository;
 import com.example.garagesystembackend.repositories.VehicleOwnerRepository;
 import com.example.garagesystembackend.services.interfaces.IVehicleOwnerService;
 import com.example.garagesystembackend.utils.JwtUtils;
@@ -45,13 +47,16 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
     @Override
-    public VehicleOwner getVehicleOwner(int ownerId){
+    public VehicleOwner getVehicleOwner(int ownerId) {
         return vehicleOwnerRepository.findByOwnerId(ownerId);
     }
 
     @Override
-    public MessageResponseDTO updateVehicleOwner(UpdateVehicleOwnerDTO updateVehicleOwnerDTO, int ownerId){
+    public MessageResponseDTO updateVehicleOwner(UpdateVehicleOwnerDTO updateVehicleOwnerDTO, int ownerId) {
         VehicleOwner selectedVehicleOwner = vehicleOwnerRepository.findByOwnerId(ownerId);
         VehicleOwner vehicleOwner = new VehicleOwner(
                 ownerId,
@@ -61,15 +66,15 @@ public class VehicleOwnerService implements IVehicleOwnerService {
                 selectedVehicleOwner.getPassword()
         );
         vehicleOwnerRepository.save(vehicleOwner);
-        return new MessageResponseDTO("success","Vehicle Owner updated successfully");
+        return new MessageResponseDTO("success", "Vehicle Owner updated successfully");
 
     }
 
     @Override
-    public JwtResponseDTO registerVehicleOwner(SignUpRequestDTO signUpRequestDTO){
+    public JwtResponseDTO registerVehicleOwner(SignUpRequestDTO signUpRequestDTO) {
         if (vehicleOwnerRepository.existsByEmail(signUpRequestDTO.getEmail())) {
-            return new JwtResponseDTO("error","Email already exists");
-        }else {
+            return new JwtResponseDTO("error", "Email already exists");
+        } else {
             VehicleOwner vehicleOwner = new VehicleOwner(
                     signUpRequestDTO.getName(),
                     signUpRequestDTO.getEmail(),
@@ -78,21 +83,23 @@ public class VehicleOwnerService implements IVehicleOwnerService {
             );
             vehicleOwnerRepository.save(vehicleOwner);
             var jwtToken = jwtUtils.generateToken(vehicleOwner.getEmail());
-            return new JwtResponseDTO(vehicleOwner.getOwnerId(), "success", "User registered successfully", jwtToken);
+            RefreshToken refreshToken = refreshTokenService.generateRefreshToken(vehicleOwner.getOwnerId());
+            return new JwtResponseDTO(vehicleOwner.getOwnerId(), "success", "User registered successfully", jwtToken, refreshToken.getRefreshToken());
         }
     }
 
     @Override
     public JwtResponseDTO loginVehicleOwner(LoginRequestDTO loginRequestDTO) {
         if (!vehicleOwnerRepository.existsByEmail(loginRequestDTO.getEmail())) {
-            return new JwtResponseDTO("error","User not found");
-        }else if (!passwordEncoder.matches(loginRequestDTO.getPassword(), vehicleOwnerRepository.findByEmail(loginRequestDTO.getEmail()).getPassword())) {
-            return new JwtResponseDTO("error","Incorrect password");
-        }else {
+            return new JwtResponseDTO("error", "User not found");
+        } else if (!passwordEncoder.matches(loginRequestDTO.getPassword(), vehicleOwnerRepository.findByEmail(loginRequestDTO.getEmail()).getPassword())) {
+            return new JwtResponseDTO("error", "Incorrect password");
+        } else {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
             VehicleOwner vehicleOwner = vehicleOwnerRepository.findByEmail(loginRequestDTO.getEmail());
             var jwtToken = jwtUtils.generateToken(vehicleOwner.getEmail());
-            return new JwtResponseDTO(vehicleOwner.getOwnerId(), "success", "User login successfully", jwtToken);
+            RefreshToken refreshToken = refreshTokenService.generateRefreshToken(vehicleOwner.getOwnerId());
+            return new JwtResponseDTO(vehicleOwner.getOwnerId(), "success", "User login successfully", jwtToken, refreshToken.getRefreshToken());
         }
     }
 
@@ -101,16 +108,16 @@ public class VehicleOwnerService implements IVehicleOwnerService {
         ExtractTokenResponseDTO extractTokenResponseDTO = jwtAuthenticationFilter.extractTokenFromRequest(request);
         System.out.println("token" + extractTokenResponseDTO.getToken());
         jwtUtils.addToBlacklist(extractTokenResponseDTO.getToken());
-        return new MessageResponseDTO("success","Logged out successfully");
+        return new MessageResponseDTO("success", "Logged out successfully");
 
     }
 
     @Override
     public MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO) {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByEmail(forgotPasswordRequestDTO.getEmail());
-        if(!vehicleOwnerRepository.existsByEmail(forgotPasswordRequestDTO.getEmail())){
-            return new MessageResponseDTO("error","User not found");
-        }else{
+        if (!vehicleOwnerRepository.existsByEmail(forgotPasswordRequestDTO.getEmail())) {
+            return new MessageResponseDTO("error", "User not found");
+        } else {
             if (passwordResetTokenRepository.existsByVehicleOwner(vehicleOwner)) {
                 passwordResetTokenRepository.delete(passwordResetTokenRepository.findByVehicleOwner(vehicleOwner));
             }
@@ -131,24 +138,24 @@ public class VehicleOwnerService implements IVehicleOwnerService {
 
             emailService.sendEmail(passwordResetEmail);
         }
-        return new MessageResponseDTO("success","Password reset link sent to your email");
+        return new MessageResponseDTO("success", "Password reset link sent to your email");
     }
 
     @Override
     public MessageResponseDTO resetPassword(ResetPasswordRequestDTO resetPasswordRequestDTO) {
-        if (!passwordResetTokenRepository.existsByToken(resetPasswordRequestDTO.getToken())){
-            return new MessageResponseDTO("error","Invalid token.Try requesting new password reset link");
+        if (!passwordResetTokenRepository.existsByToken(resetPasswordRequestDTO.getToken())) {
+            return new MessageResponseDTO("error", "Invalid token.Try requesting new password reset link");
         }
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(resetPasswordRequestDTO.getToken());
         VehicleOwner vehicleOwner = passwordResetToken.getVehicleOwner();
         boolean isTokenExpired = passwordResetToken.getExpiration().isBefore(LocalDateTime.now());
-        if (isTokenExpired){
-            return new MessageResponseDTO("error","Token expired.Try requesting new password reset link");
-        }else {
+        if (isTokenExpired) {
+            return new MessageResponseDTO("error", "Token expired.Try requesting new password reset link");
+        } else {
             vehicleOwner.setPassword(passwordEncoder.encode(resetPasswordRequestDTO.getPassword()));
             vehicleOwnerRepository.save(vehicleOwner);
             passwordResetTokenRepository.delete(passwordResetTokenRepository.findByToken(resetPasswordRequestDTO.getToken()));
-            return new MessageResponseDTO("success","Password reset successfully");
+            return new MessageResponseDTO("success", "Password reset successfully");
         }
     }
 
@@ -157,12 +164,14 @@ public class VehicleOwnerService implements IVehicleOwnerService {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByOwnerId(ownerId);
         String currentPassword = passwordEncoder.encode(changePasswordRequestDTO.getCurrentPassword());
         if (!passwordEncoder.matches(currentPassword, vehicleOwner.getPassword())) {
-            return new MessageResponseDTO("error","Current password is incorrect");
-        }else {
+            return new MessageResponseDTO("error", "Current password is incorrect");
+        } else {
             vehicleOwner.setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
             vehicleOwnerRepository.save(vehicleOwner);
-            return new MessageResponseDTO("success","Password changed successfully");
+            return new MessageResponseDTO("success", "Password changed successfully");
         }
 
     }
+
+
 }

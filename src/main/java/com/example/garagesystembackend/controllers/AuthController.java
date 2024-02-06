@@ -1,11 +1,10 @@
 package com.example.garagesystembackend.controllers;
 
-import com.example.garagesystembackend.DTO.requests.ForgotPasswordRequestDTO;
-import com.example.garagesystembackend.DTO.requests.LoginRequestDTO;
-import com.example.garagesystembackend.DTO.requests.ResetPasswordRequestDTO;
-import com.example.garagesystembackend.DTO.requests.SignUpRequestDTO;
+import com.example.garagesystembackend.DTO.requests.*;
 import com.example.garagesystembackend.DTO.responses.JwtResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
+import com.example.garagesystembackend.DTO.responses.RefreshTokenResponseDTO;
+import com.example.garagesystembackend.services.RefreshTokenService;
 import com.example.garagesystembackend.services.VehicleOwnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,9 @@ public class AuthController {
 
     @Autowired
     public VehicleOwnerService vehicleOwnerService;
+
+    @Autowired
+    public RefreshTokenService refreshTokenService;
 
 
     @PostMapping("/register")
@@ -49,6 +51,12 @@ public class AuthController {
     public MessageResponseDTO resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
         return vehicleOwnerService.resetPassword(resetPasswordRequestDTO);
     }
+
+    @PostMapping("/refreshToken")
+    public RefreshTokenResponseDTO refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO){
+        return refreshTokenService.getRefreshToken(refreshTokenRequestDTO);
+    }
+
 
 
 }
