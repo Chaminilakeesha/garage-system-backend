@@ -154,14 +154,14 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     @Override
     public MessageResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, int ownerId) {
         VehicleOwner vehicleOwner = vehicleOwnerRepository.findByOwnerId(ownerId);
-        String currentPassword = passwordEncoder.encode(changePasswordRequestDTO.getCurrentPassword());
-        if (!passwordEncoder.matches(currentPassword, vehicleOwner.getPassword())) {
+        if (!passwordEncoder.matches(changePasswordRequestDTO.getCurrentPassword(), vehicleOwner.getPassword())) {
             return new MessageResponseDTO("error","Current password is incorrect");
         }else {
             vehicleOwner.setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
             vehicleOwnerRepository.save(vehicleOwner);
             return new MessageResponseDTO("success","Password changed successfully");
         }
+
 
     }
 }
