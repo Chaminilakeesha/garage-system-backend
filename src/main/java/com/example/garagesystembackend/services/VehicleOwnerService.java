@@ -99,7 +99,6 @@ public class VehicleOwnerService implements IVehicleOwnerService {
     @Override
     public MessageResponseDTO logoutVehicleOwner(HttpServletRequest request) {
         ExtractTokenResponseDTO extractTokenResponseDTO = jwtAuthenticationFilter.extractTokenFromRequest(request);
-        System.out.println("token" + extractTokenResponseDTO.getToken());
         jwtUtils.addToBlacklist(extractTokenResponseDTO.getToken());
         return new MessageResponseDTO("success","Logged out successfully");
 

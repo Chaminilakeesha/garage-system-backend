@@ -1,4 +1,4 @@
-package com.example.garagesystembackend;
+package com.example.garagesystembackend.configurations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

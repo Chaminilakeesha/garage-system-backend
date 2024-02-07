@@ -1,4 +1,4 @@
-package com.example.garagesystembackend;
+package com.example.garagesystembackend.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

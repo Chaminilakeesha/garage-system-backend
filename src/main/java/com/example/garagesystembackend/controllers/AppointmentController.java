@@ -22,8 +22,6 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @Autowired
-    private KafkaProducer kafkaProducer;
 
     @PostMapping("/reserve/{ownerId}")
     public MessageResponseDTO bookAppointment(@RequestBody BookAppointmentRequestDTO bookAppointmentRequestDTO, @PathVariable int ownerId){
@@ -45,9 +43,6 @@ public class AppointmentController {
         return appointmentService.getAllTimeSlots();
     }
 
-    @PostMapping("/updateStatus")
-    public void sendAppointmentStatus(@RequestBody AppointmentStatusResponseDTO appointmentStatusResponseDTO){
-        kafkaProducer.sendAppointmentStatus("appointment-status",appointmentStatusResponseDTO);
-    }
+
 
 }

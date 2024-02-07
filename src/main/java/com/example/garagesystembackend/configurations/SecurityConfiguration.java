@@ -1,4 +1,4 @@
-package com.example.garagesystembackend;
+package com.example.garagesystembackend.configurations;
 
 import com.example.garagesystembackend.filters.JwtAuthenticationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;

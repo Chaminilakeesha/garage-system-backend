@@ -4,8 +4,10 @@ import com.example.garagesystembackend.DTO.requests.ForgotPasswordRequestDTO;
 import com.example.garagesystembackend.DTO.requests.LoginRequestDTO;
 import com.example.garagesystembackend.DTO.requests.ResetPasswordRequestDTO;
 import com.example.garagesystembackend.DTO.requests.SignUpRequestDTO;
+import com.example.garagesystembackend.DTO.responses.AppointmentStatusResponseDTO;
 import com.example.garagesystembackend.DTO.responses.JwtResponseDTO;
 import com.example.garagesystembackend.DTO.responses.MessageResponseDTO;
+import com.example.garagesystembackend.kafka.producer.KafkaProducer;
 import com.example.garagesystembackend.services.VehicleOwnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class AuthController {
 
     @Autowired
     public VehicleOwnerService vehicleOwnerService;
+
+    @Autowired
+    private KafkaProducer kafkaProducer;
 
 
     @PostMapping("/register")
@@ -48,6 +53,11 @@ public class AuthController {
     @PostMapping("/resetPassword")
     public MessageResponseDTO resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
         return vehicleOwnerService.resetPassword(resetPasswordRequestDTO);
+    }
+
+    @PostMapping("/updateStatus")
+    public void sendAppointmentStatus(@RequestBody AppointmentStatusResponseDTO appointmentStatusResponseDTO){
+        kafkaProducer.sendAppointmentStatus("appointment-status",appointmentStatusResponseDTO);
     }
 
 
